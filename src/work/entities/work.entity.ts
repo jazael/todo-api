@@ -1,5 +1,11 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
 
+export enum WorkStatus {
+  PENDIENTE = 'PENDIENTE',
+  EN_CURSO = 'EN_CURSO',
+  COMPLETADO = 'COMPLETADO',
+}
+
 @Table({ tableName: 'work', timestamps: false })
 export class Work extends Model<Work> {
   @Column({
@@ -22,10 +28,11 @@ export class Work extends Model<Work> {
   subtitle: string;
 
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.ENUM(...Object.values(WorkStatus)),
     allowNull: false,
+    defaultValue: WorkStatus.PENDIENTE,
   })
-  status: boolean;
+  status: WorkStatus;
 
   @Column({
     type: DataType.DATEONLY,

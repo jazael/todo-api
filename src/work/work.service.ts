@@ -1,26 +1,44 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWorkDto } from './dto/create-work.dto';
 import { UpdateWorkDto } from './dto/update-work.dto';
+import { Work, WorkStatus } from './entities/work.entity';
+import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class WorkService {
-  create(createWorkDto: CreateWorkDto) {
-    return 'This action adds a new work';
+  constructor(
+    @InjectModel(Work)
+    private workModel: typeof Work,
+  ) {}
+
+  async create(title: string, subtitle: string): Promise<Work> {
+    return this.workModel.create({ title, subtitle });
   }
 
-  findAll() {
-    return `This action returns all work`;
+  async findAll(): Promise<Work[]> {
+    return this.workModel.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} work`;
+  async findOne(id: number): Promise<Work> {
+    return this.workModel.findByPk(id);
   }
 
-  update(id: number, updateWorkDto: UpdateWorkDto) {
-    return `This action updates a #${id} work`;
+  async update(id: number, data: Partial<Work>): Promise<[number, Work[]]> {
+    const [affectedCount, affectedRows] = await this.workModel.update(
+      { ...data, updatedate: new Date() },
+      { where: { id }, returning: true },
+    );
+    return [affectedCount, affectedRows];
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} work`;
+  async remove(id: number): Promise<number> {
+    return this.workModel.destroy({ where: { id } });
+  }
+
+  async changeStatus(
+    id: number,
+    newStatus: WorkStatus,
+  ): Promise<[number, Work[]]> {
+    return this.update(id, { status: newStatus });
   }
 }

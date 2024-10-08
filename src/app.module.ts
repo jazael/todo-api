@@ -6,9 +6,7 @@ import { WorkModule } from './work/work.module';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { Work } from './work/entities/work.entity';
-// import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
-// import { jwtConstants } from './auth/constants';
 
 @Module({
   imports: [
